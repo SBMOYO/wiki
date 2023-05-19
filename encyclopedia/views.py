@@ -55,7 +55,7 @@ def search(request):
 
         # Initialize matching_files to an empty list
         matching_files = []
-        
+    
         if content == None:
 
             # intialize filenames to an empty list
@@ -74,9 +74,10 @@ def search(request):
                     matching_files.append(file)
             
             print(matching_files)
+            content = None
         
         
-        return render(request, "encyclopedia/title.html", {
+        return render(request, "encyclopedia/search.html", {
             "title": search_word,
             "content": content,
             "entries": matching_files
