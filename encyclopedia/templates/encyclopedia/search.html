@@ -1,0 +1,25 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Encyclopedia
+{% endblock %}
+
+{% block body %}
+
+    {% if content %}
+        <p>{{ content|safe }}</p>
+
+    {% else %}
+        <ul>
+            {% for entry in entries %}
+                <li><a href="{% url 'get_title' entry %}">{{ entry }}</a></li>
+            {% endfor %}
+        </ul>
+
+    {% endif %}
+
+
+    
+
+
+{% endblock %}
