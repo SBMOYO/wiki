@@ -79,4 +79,7 @@ def search(request):
             "content": content,
             "entries": matching_files
         })
-        
+
+
+def new_page(request):
+    return render(request, "encyclopedia/new_page.html")  
