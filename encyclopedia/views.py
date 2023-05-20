@@ -69,8 +69,9 @@ def search(request):
                 if search_word in file.lower():
                     matching_files.append(file)
             
-            print(matching_files)
-            content = None
+            if not matching_files:
+                content = markdown.markdown(f"## {search_word.capitalize()}\'s page has not been found")
+
         
         
         return render(request, "encyclopedia/search.html", {
