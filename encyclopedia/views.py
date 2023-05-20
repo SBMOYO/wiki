@@ -11,6 +11,11 @@ import re
 from . import util
 
 
+class New_entry(forms.Form):
+    title = forms.CharField()
+    md = forms.Textarea()
+
+
 def convert_md_to_html(title):
     content = util.get_entry(title)
     markdowner = Markdown()
@@ -82,4 +87,7 @@ def search(request):
 
 
 def new_page(request):
-    return render(request, "encyclopedia/new_page.html")  
+    form = New_entry()
+    return render(request, "encyclopedia/new_page.html", {
+        "form": form
+    })  
