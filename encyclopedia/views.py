@@ -5,10 +5,16 @@ from django.urls import reverse
 from django import forms
 from markdown2 import Markdown
 import markdown
+import random
 
 import re
 
 from . import util
+
+
+class New_entry(forms.Form):
+    title =  forms.CharField(widget=forms.TextInput(attrs={'name':'title'}))
+    body = forms.CharField(widget=forms.Textarea(attrs={'name':'body', 'style': 'height: 300px; display: block;'}))
 
 
 def convert_md_to_html(title):
@@ -72,11 +78,84 @@ def search(request):
             if not matching_files:
                 content = markdown.markdown(f"## {search_word.capitalize()}\'s page has not been found")
 
-        
-        
         return render(request, "encyclopedia/search.html", {
             "title": search_word,
             "content": content,
             "entries": matching_files
         })
-        
+
+
+def new_page(request):
+
+    if request.method == "POST":
+
+        new_form = New_entry(request.POST)
+
+        if new_form.is_valid():
+
+            clean_form = new_form.cleaned_data
+            title = clean_form["title"]
+            content = clean_form["body"]
+
+            if util.get_entry(title) is None:
+
+                util.save_entry(title, content)
+                return HttpResponseRedirect(reverse("encyclopedia:get_title", args=[title]))
+            
+            else:
+                # handle case where title already exists
+                content = markdown.markdown(f"## {title.capitalize()}\'s page already exist")
+                return render(request, "encyclopedia/error.html", {
+                    "content": content
+                })
+                
+    else:
+        new_form = New_entry()
+        return render(request, "encyclopedia/new_page.html", {
+            "form": new_form
+            })
+
+
+def edit_page(request):
+
+    if request.method == "POST":
+
+        title = request.POST['entry_title']
+        content = util.get_entry(title)
+
+        initial_data = {'title': title, 'body': content}
+        form = New_entry(initial=initial_data)
+
+        return render(request, "encyclopedia/edit_page.html", {
+            "form": form
+        })
+    
+
+def save_edit(request):
+
+    if request.method == 'POST':
+        title = request.POST['title']
+        content = request.POST['body']
+
+        util.save_entry(title, content)
+        #html_content = convert_md_to_html(title)
+
+        return HttpResponseRedirect(reverse("encyclopedia:get_title", args=[title]))
+
+
+def random_page(request):
+
+    # intialize filenames to an empty list
+    filenames = []
+    
+    dir_contents = default_storage.listdir("entries")
+    for filename in dir_contents:
+        filenames.append(filename)
+    
+    files = filenames[1]
+    files = [file[:-3] for file in files]
+
+    page = random.choice(files)
+
+    return HttpResponseRedirect(reverse("encyclopedia:get_title", args=[page]))
+
