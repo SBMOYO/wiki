@@ -5,10 +5,10 @@
 {% endblock %}
 
 {% block body %}
-    <h1>NEW PAGE</h1>
+    <h1>EDIT PAGE</h1>
 
   
-      <form action="{% url 'encyclopedia:new_page' %}" method="post">
+      <form action="{% url 'encyclopedia:save_edit' %}" method="post">
         {% csrf_token %}
         {{ form }}
         <button type="submit">save</button>

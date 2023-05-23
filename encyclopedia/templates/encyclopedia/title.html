@@ -7,5 +7,11 @@
 {% block body %}
 
     <p>{{ content|safe }}</p>
+    
+    <form action="{% url 'encyclopedia:edit_page' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="entry_title" value="{{ title }}">
+        <button type="submit">edit content</button>
+    </form>
 
 {% endblock %}
